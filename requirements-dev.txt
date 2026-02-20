@@ -1,0 +1,7 @@
+# requirements-dev.txt — local dev tooling (NOT used inside Docker)
+# Activate venv first: source .venv/bin/activate
+
+pyyaml        # YAML validation scripts
+pytest        # local test runner
+httpx         # local API testing with pytest
+locust        # optional: run Locust locally outside Docker
