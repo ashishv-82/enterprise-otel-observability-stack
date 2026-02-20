@@ -1,0 +1,113 @@
+services:
+
+  # ── Application ─────────────────────────────────────────────────────────────
+  app:
+    build: ./app
+    container_name: otel-app
+    env_file: .env
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES}
+    ports:
+      - "8000:8000"
+    depends_on:
+      adot:
+        condition: service_started
+    restart: unless-stopped
+
+  # ── ADOT Collector ──────────────────────────────────────────────────────────
+  adot:
+    image: public.ecr.aws/aws-observability/aws-otel-collector:latest
+    container_name: adot
+    volumes:
+      - ./adot/config.yaml:/etc/otelcol/config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+      - "8888:8888"   # ADOT metrics (self-monitoring)
+    depends_on:
+      - prometheus
+      - loki
+      - xray-daemon
+    restart: unless-stopped
+
+  # ── Prometheus ───────────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    restart: unless-stopped
+
+  # ── Loki ─────────────────────────────────────────────────────────────────────
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+    ports:
+      - "${LOKI_PORT:-3100}:3100"
+    depends_on:
+      - minio
+    restart: unless-stopped
+
+  # ── MinIO (S3-compatible storage for Loki) ────────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - minio-data:/data
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    restart: unless-stopped
+
+  # ── X-Ray Daemon ──────────────────────────────────────────────────────────────
+  xray-daemon:
+    image: amazon/aws-xray-daemon:latest
+    container_name: xray-daemon
+    command: --local-mode  # no AWS credentials required locally
+    ports:
+      - "${XRAY_PORT:-2000}:2000/udp"
+    restart: unless-stopped
+
+  # ── Grafana ───────────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    depends_on:
+      - prometheus
+      - loki
+    restart: unless-stopped
+
+  # ── Locust (started manually with --profile load) ─────────────────────────────
+  locust:
+    build: ./locust
+    container_name: locust
+    environment:
+      - LOCUST_HOST=${LOCUST_HOST:-http://app:8000}
+    ports:
+      - "8089:8089"   # Locust web UI
+    depends_on:
+      - app
+    profiles:
+      - load
+    restart: unless-stopped
+
+volumes:
+  minio-data:
