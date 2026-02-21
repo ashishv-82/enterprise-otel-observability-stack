@@ -121,6 +121,7 @@ These decisions are finalised. Do not suggest alternatives unless explicitly ask
 - `requirements-dev.txt` (project root) — local dev tooling (pytest, pyyaml, httpx, locust)
 - `app/requirements.txt` — FastAPI app dependencies (used inside Docker only)
 - Use `opentelemetry-sdk` and `opentelemetry-exporter-otlp` — no other telemetry libraries
+- **WARNING:** The Python OTel SDK requires `OTEL_EXPORTER_OTLP_ENDPOINT` to be explicitly set. Without a default value, it silently drops telemetry.
 - Emit all telemetry via OTLP to the ADOT collector endpoint (`OTEL_EXPORTER_OTLP_ENDPOINT`)
 - Custom metrics use the OTel `Gauge` API (not Prometheus client library directly)
 - Background log generator runs as a `threading.Thread` started at app startup
@@ -128,6 +129,7 @@ These decisions are finalised. Do not suggest alternatives unless explicitly ask
 ### ADOT Config
 - Config lives at `adot/config.yaml`
 - Swap between local and AWS by changing exporter endpoints only — pipeline structure stays the same
+- **WARNING:** The `awsxray` exporter in ADOT requires valid AWS credentials to initialise, even when `local_mode: true` is set. Pass `AWS_ACCESS_KEY_ID=dummy` via environment variables and use `AWS_XRAY_DAEMON_ADDRESS` to route traces locally without an `endpoint` setting.
 
 ### Grafana
 - Datasource provisioning: `grafana/provisioning/datasources/`
