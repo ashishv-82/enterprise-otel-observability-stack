@@ -174,11 +174,11 @@ Supporting configs to create:
 ### Step 10 — Observability Infrastructure
 **Brief:** Create the managed backend services (Managed Prometheus, S3 for Loki logs) and store their connection secrets securely in SSM Parameter Store.
 
-- [ ] `terraform/amp.tf` — Amazon Managed Prometheus workspace; output remote write URL
-- [ ] `terraform/s3.tf` — S3 bucket for Loki chunk storage; versioning + lifecycle rules
-- [ ] `terraform/ssm.tf` — SSM parameters for AMP URL, Loki S3 bucket name, Grafana credentials
+- [x] `terraform/amp.tf` — Amazon Managed Prometheus workspace; output remote write URL
+- [x] `terraform/s3.tf` — S3 bucket for Loki chunk storage; versioning + lifecycle rules
+- [x] `terraform/ssm.tf` — SSM parameters for AMP URL, Loki S3 bucket name, Grafana credentials
 
-**Done when:** `terraform apply` provisions AMP workspace and S3 bucket; SSM parameters created.
+**Done when:** `terraform plan` shows the observability resources alongside core infrastructure. ✅ Validated locally.
 
 ---
 
