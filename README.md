@@ -1,5 +1,8 @@
 # Enterprise OTel Observability Stack
 
+> [!IMPORTANT]
+> **Current Status:** Phase 1 (Local) is **Complete**. Phase 2 (AWS) is **In Progress** (Currently on Step 12 — CI/CD).
+
 A production-grade, end-to-end observability platform for containerised applications using **OpenTelemetry** as the unified telemetry layer. Infrastructure, configuration, and dashboards are all managed as code.
 
 ## What This Is

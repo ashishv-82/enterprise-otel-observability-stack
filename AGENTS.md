@@ -60,7 +60,7 @@ Step-by-step build tasks are in [`docs/IMPLEMENTATION_PLAN.md`](./docs/IMPLEMENT
 | Phase | Status | Infra |
 |---|---|---|
 | Phase 1 — Local | ✅ Complete | Docker Compose |
-| Phase 2 — AWS | 🟡 In Progress | Terraform + ECS |
+| Phase 2 — AWS | 🟡 In Progress (Step 12) | Terraform + ECS |
 
 ---
 
@@ -137,7 +137,7 @@ These decisions are finalised. Do not suggest alternatives unless explicitly ask
 
 ### Terraform
 - All Terraform code lives under `terraform/`
-- Remote state backend configured in `terraform/backend.tf`
+- Remote state backend configured in `terraform/main.tf`
 - Separate files per resource group: `ecs.tf`, `amp.tf`, `s3.tf`, `iam.tf`, etc.
 
 ### File Structure (Target)
