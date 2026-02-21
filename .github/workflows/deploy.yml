@@ -9,6 +9,7 @@ permissions:
   contents: read  # Required for actions/checkout
 
 jobs:
+  # The main deployment job that builds images and applies Terraform
   deploy:
     runs-on: ubuntu-latest
     env:
@@ -16,19 +17,23 @@ jobs:
       PROJECT_NAME: enterprise-otel
 
     steps:
+      # Pulls the repository code into the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Uses the secure OIDC role to get temporary AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # Authenticates the local Docker daemon with the AWS ECR registry
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      # Builds the FastAPI app Docker image and pushes it to the ECR repo
       - name: Build and Push App Image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -36,6 +41,7 @@ jobs:
           docker build -t $ECR_REGISTRY/${{ env.PROJECT_NAME }}-app-dev:latest ./app
           docker push $ECR_REGISTRY/${{ env.PROJECT_NAME }}-app-dev:latest
 
+      # Builds the Locust load-generator image and pushes it to the ECR repo
       - name: Build and Push Locust Image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -46,15 +52,18 @@ jobs:
             docker push $ECR_REGISTRY/${{ env.PROJECT_NAME }}-locust-dev:latest
           fi
 
+      # Installs the specific version of Terraform CLI on the runner
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.5.0"
 
+      # Initializes Terraform, connecting it to the S3 backend to access state
       - name: Terraform Init
         working-directory: ./terraform
         run: terraform init
 
+      # Automatically Provisions the AWS infrastructure without requiring manual approval
       - name: Terraform Apply
         working-directory: ./terraform
         run: terraform apply -auto-approve -var="environment=dev" -var="aws_region=${{ env.AWS_REGION }}"
