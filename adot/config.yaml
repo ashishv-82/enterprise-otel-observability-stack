@@ -1,0 +1,62 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  # Batch telemetry before sending to reduce overhead
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+
+  # Adds resource attributes (like service instance metadata) to metrics/logs/traces
+  resourcedetection:
+    detectors: [env, system]
+    timeout: 2s
+    override: false
+
+exporters:
+  # Metrics -> Prometheus
+  prometheusremotewrite:
+    endpoint: "http://prometheus:9090/api/v1/write"
+    # Convert OTel resource attributes into Prometheus metric labels
+    resource_to_telemetry_conversion:
+      enabled: true
+
+  # Logs -> Loki using standard OTLP over HTTP
+  # (ADOT doesn't include the custom 'loki' exporter, but Loki natively accepts OTLP!)
+  otlphttp/loki:
+    endpoint: "http://loki:3100/otlp"
+    tls:
+      insecure: true
+
+  # Traces -> AWS X-Ray Daemon
+  awsxray:
+    endpoint: "xray-daemon:2000"
+    region: "${AWS_REGION}"
+    # X-Ray specific adjustments
+    local_mode: true
+    no_verify_ssl: false
+
+service:
+  # Internal ADOT telemetry
+  telemetry:
+    metrics:
+      level: detailed
+
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [resourcedetection, batch]
+      exporters: [prometheusremotewrite]
+    logs:
+      receivers: [otlp]
+      processors: [resourcedetection, batch]
+      exporters: [otlphttp/loki]
+    traces:
+      receivers: [otlp]
+      processors: [resourcedetection, batch]
+      exporters: [awsxray]
