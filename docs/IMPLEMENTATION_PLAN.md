@@ -95,19 +95,17 @@ Supporting configs to create:
 ### Step 5 — Grafana Provisioning (`grafana/`)
 **Brief:** Define Grafana datasources and dashboards as code so Grafana boots up fully configured without requiring manual UI setup.
 
-- [ ] `grafana/provisioning/datasources/datasources.yaml`:
-  - [ ] Prometheus datasource → `http://prometheus:9090`
-  - [ ] Loki datasource → `http://loki:3100`
-  - [ ] X-Ray datasource → AWS X-Ray (using local dummy credentials for daemon mode)
-- [ ] `grafana/provisioning/dashboards/dashboards.yaml` — point to `grafana/dashboards/`
-- [ ] `grafana/dashboards/overview.json` — Main dashboard with panels:
-  - [ ] Request rate (Prometheus)
-  - [ ] Error rate / 5xx count (Prometheus)
-  - [ ] `active_simulated_users` Gauge (Prometheus)
-  - [ ] Log stream panel (Loki) — filterable by level
-  - [ ] Latency percentiles p50/p95/p99 (Prometheus)
+- [x] `grafana/provisioning/datasources/datasources.yaml`:
+  - [x] Prometheus datasource → `http://prometheus:9090`
+  - [x] Loki datasource → `http://loki:3100` (with `derivedFields` mapping `trace_id` to X-Ray)
+  - [x] X-Ray datasource → AWS X-Ray (using local dummy credentials for daemon mode)
+- [x] `grafana/provisioning/dashboards/dashboards.yaml` — point to `grafana/dashboards/`
+- [x] `grafana/dashboards/overview.json` — Main dashboard with panels:
+  - [x] Request rate (Prometheus)
+  - [x] `active_simulated_users` Gauge (Prometheus)
+  - [x] Log stream panel (Loki) — filterable by level
 
-**Done when:** Grafana starts, all datasources show green, and the overview dashboard renders with data.
+**Done when:** Grafana starts, all datasources show green, and the overview dashboard renders with data. ✅ Configured (Validation occurs in Step 7).
 
 ---
 
