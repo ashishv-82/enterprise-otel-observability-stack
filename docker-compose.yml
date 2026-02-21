@@ -123,7 +123,7 @@ services:
     volumes:
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
-      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./grafana/dashboard-definitions:/var/lib/grafana/dashboards:ro
     ports:
       - "${GRAFANA_PORT:-3000}:3000"
     depends_on:

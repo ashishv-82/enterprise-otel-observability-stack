@@ -10,5 +10,5 @@ providers:
     updateIntervalSeconds: 10
     allowUiUpdates: true
     options:
-      # Tell Grafana to look in this directory for dashboard JSON files
+      # Tell Grafana to look in this directory for dashboard JSON files (mounted from grafana/dashboard-definitions)
       path: /var/lib/grafana/dashboards

@@ -17,7 +17,7 @@
 - [x] Create directory structure:
   ```
   app/ adot/ grafana/provisioning/datasources/ grafana/provisioning/dashboards/
-  grafana/dashboards/ locust/ terraform/
+  grafana/dashboard-definitions/ locust/ terraform/
   ```
 - [x] Create `.gitignore` — include `.env`, `*.tfstate`, `.terraform/`, `__pycache__/`
 - [x] Create `.env.example` with all required env var keys (no values)
@@ -80,7 +80,7 @@ Wire all 7 services with correct dependencies and env vars:
 - [x] `loki` — `grafana/loki`; expose port 3100; mount `loki-config.yaml`; volume for MinIO storage
 - [x] `minio` — `minio/minio`; S3-compatible storage for Loki; expose ports 9000/9001
 - [x] `xray-daemon` — `amazon/aws-xray-daemon`; expose port 2000/UDP
-- [x] `grafana` — `grafana/grafana-oss`; expose port 3000; mount provisioning dirs
+- [x] `grafana` — `grafana/grafana-oss`; expose port 3000; mount provisioning dirs and `grafana/dashboard-definitions`
 - [x] `locust` — custom image from `locust/`; profile `--profile load` so it doesn't start by default
 
 Supporting configs to create:
@@ -99,8 +99,8 @@ Supporting configs to create:
   - [x] Prometheus datasource → `http://prometheus:9090`
   - [x] Loki datasource → `http://loki:3100` (with `derivedFields` mapping `trace_id` to X-Ray)
   - [x] X-Ray datasource → AWS X-Ray (using local dummy credentials for daemon mode)
-- [x] `grafana/provisioning/dashboards/dashboards.yaml` — point to `grafana/dashboards/`
-- [x] `grafana/dashboards/overview.json` — Main dashboard with panels:
+- [x] `grafana/provisioning/dashboards/dashboards.yaml` — point to `grafana/dashboard-definitions/`
+- [x] `grafana/dashboard-definitions/overview.json` — Main dashboard with panels:
   - [x] Request rate (Prometheus)
   - [x] `active_simulated_users` Gauge (Prometheus)
   - [x] Log stream panel (Loki) — filterable by level
