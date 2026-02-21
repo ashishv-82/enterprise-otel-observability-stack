@@ -1,0 +1,60 @@
+name: Deployment (Phase 2)
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  id-token: write # Required for requesting the JWT
+  contents: read  # Required for actions/checkout
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      PROJECT_NAME: enterprise-otel
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push App Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/${{ env.PROJECT_NAME }}-app-dev:latest ./app
+          docker push $ECR_REGISTRY/${{ env.PROJECT_NAME }}-app-dev:latest
+
+      - name: Build and Push Locust Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          # Note: Simple build using the root context or locust dir if it exists
+          if [ -d "locust" ]; then
+            docker build -t $ECR_REGISTRY/${{ env.PROJECT_NAME }}-locust-dev:latest ./locust
+            docker push $ECR_REGISTRY/${{ env.PROJECT_NAME }}-locust-dev:latest
+          fi
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.0"
+
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: ./terraform
+        run: terraform apply -auto-approve -var="environment=dev" -var="aws_region=${{ env.AWS_REGION }}"

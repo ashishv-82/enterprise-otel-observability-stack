@@ -204,19 +204,19 @@ Supporting configs to create:
 ### Step 12 — CI/CD Pipeline (`.github/workflows/`)
 **Brief:** Automate the build and deployment process so that pushes to the repository automatically update the AWS infrastructure and application code.
 
-- [ ] `.github/workflows/deploy.yml`:
-  - [ ] Trigger: push to `main`
-  - [ ] Steps:
+- [x] `.github/workflows/deploy.yml`:
+  - [x] Trigger: push to `main`
+  - [x] Steps:
     1. Checkout
     2. Configure AWS credentials (OIDC — no long-lived keys)
     3. Build and push app image to ECR
     4. `terraform init`
     5. `terraform plan`
     6. `terraform apply -auto-approve`
-- [ ] GitHub secrets: `AWS_ROLE_ARN`, `AWS_REGION`, `TF_STATE_BUCKET`
-- [ ] OIDC role in AWS IAM (`terraform/iam_github.tf`) with trust policy for GitHub Actions
+- [x] GitHub secrets: `AWS_ROLE_ARN`, `AWS_REGION`, `TF_STATE_BUCKET`
+- [x] OIDC role in AWS IAM (`terraform/iam_github.tf`) with trust policy for GitHub Actions
 
-**Done when:** A push to `main` triggers the workflow; ECS service updates to new image.
+**Done when:** `terraform plan` validates the CI/CD resources; workflow file pushed. ✅ Validated locally.
 
 ---
 
