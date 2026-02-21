@@ -148,12 +148,12 @@ Supporting configs to create:
 ### Step 8 — Local AWS Auth & Terraform State Bootstrap
 **Brief:** Prepare the AWS environment for Infrastructure-as-Code (IaC) by establishing remote state storage in S3 and state locking in DynamoDB.
 
-- [ ] Ensure local AWS authentication is active (e.g., `aws sso login` or valid `~/.aws/credentials`)
-- [ ] Create S3 bucket for TF state (manually or via a bootstrap script) — versioning enabled
-- [ ] Create DynamoDB table for state locking (`LockID` string key)
-- [ ] `terraform/backend.tf` — configure S3 backend with bucket/key/region/dynamodb_table
+- [x] Ensure local AWS authentication is active (e.g., `aws sso login` or valid `~/.aws/credentials`)
+- [x] Create S3 bucket for TF state (manually or via a bootstrap script) — versioning enabled
+- [x] Create DynamoDB table for state locking (`LockID` string key)
+- [x] `terraform/backend.tf` — configure S3 backend with bucket/key/region/dynamodb_table
 
-**Done when:** `terraform init` succeeds with remote backend.
+**Done when:** `bootstrap-state.sh` is written and `main.tf` contains the backend block. ✅ Verified.
 
 ---
 
