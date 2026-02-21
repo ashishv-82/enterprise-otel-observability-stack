@@ -35,7 +35,7 @@ exporters:
 
   # Traces -> AWS X-Ray Daemon
   awsxray:
-    endpoint: "xray-daemon:2000"
+    endpoint: ""
     region: "${AWS_REGION}"
     # X-Ray specific adjustments
     local_mode: true

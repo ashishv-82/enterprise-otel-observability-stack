@@ -126,15 +126,15 @@ Supporting configs to create:
 ### Step 7 — Phase 1 Validation ✅
 **Brief:** Prove the local pipeline works end-to-end: traffic flows from Locust → App → ADOT → Backends → Grafana, and logs correlate with traces.
 
-- [ ] `docker compose up` — all 6 core services start and stay healthy
-- [ ] `GET /health` → 200
-- [ ] `GET /crash` → 500 with stack trace in Loki logs
-- [ ] Locust started → request rate panel in Grafana shows a spike
-- [ ] Loki log panel shows ERROR entries from `/crash`
-- [ ] X-Ray trace visible for a `/crash` request
-- [ ] Log entry in Loki links to its X-Ray trace (Log-to-Trace correlation)
+- [x] `docker compose up` — all 6 core services start and stay healthy
+- [x] `GET /health` → 200
+- [x] `GET /crash` → 500 with stack trace in Loki logs
+- [x] Locust started → request rate panel in Grafana shows a spike
+- [x] Loki log panel shows ERROR entries from `/crash`
+- [x] X-Ray trace visible for a `/crash` request
+- [x] Log entry in Loki links to its X-Ray trace (Log-to-Trace correlation)
 
-**Phase 1 is complete when all validation steps above pass.**
+**Phase 1 is complete when all validation steps above pass.** ✅ Verified locally.
 
 ---
 

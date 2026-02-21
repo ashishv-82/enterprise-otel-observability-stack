@@ -10,7 +10,7 @@ services:
       - "${APP_PORT:-8000}:8000"
     environment:
       # Route all OTel telemetry (traces, metrics, logs) to the ADOT sidecar
-      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://adot:4317}
       # Set resource attributes (especially service.name) used by Loki and X-Ray
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES}
     depends_on:
@@ -32,6 +32,9 @@ services:
       - "8888:8888"
     environment:
       - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+      - AWS_XRAY_DAEMON_ADDRESS=xray-daemon:2000
     depends_on:
       - prometheus
       - loki
