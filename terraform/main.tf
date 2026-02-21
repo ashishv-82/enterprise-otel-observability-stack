@@ -13,7 +13,7 @@ terraform {
   # config doesn't allow variables, these are hardcoded. If you change 
   # the script defaults, you must change them here.
   backend "s3" {
-    bucket         = "otel-enterprise-tf-state-replace-me" # Replace me after running bootstrap
+    bucket         = "otel-enterprise-tf-state-6118696b"
     key            = "global/s3/terraform.tfstate"
     region         = "ap-southeast-2"
     dynamodb_table = "otel-enterprise-tf-locks"
