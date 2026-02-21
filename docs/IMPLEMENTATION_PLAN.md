@@ -12,6 +12,7 @@
 ---
 
 ### Step 1 — Project Scaffolding
+**Brief:** Set up the foundational folder structure, environment variables, ignore files, and local development tooling.
 
 - [x] Create directory structure:
   ```
@@ -29,6 +30,7 @@
 ---
 
 ### Step 2 — FastAPI Application (`app/`)
+**Brief:** Build the target application instrumented with the OpenTelemetry SDK to generate traces, metrics, and logs natively.
 
 - [x] `app/main.py` — FastAPI app with:
   - [x] OTel SDK setup: `TracerProvider`, `MeterProvider`, `LoggerProvider`
@@ -52,6 +54,7 @@
 ---
 
 ### Step 3 — ADOT Collector Config (`adot/`)
+**Brief:** Configure the AWS Distro for OpenTelemetry (ADOT) collector to receive all telemetry from the app and route it to local backend storage containers.
 
 - [ ] `adot/config.yaml` with:
   - [ ] **Receiver:** `otlp` (grpc: 4317, http: 4318)
@@ -67,6 +70,7 @@
 ---
 
 ### Step 4 — Docker Compose (`docker-compose.yml`)
+**Brief:** Wire together the entire local observability platform (App, ADOT, Prometheus, Loki, MinIO, X-Ray, Grafana) into a cohesive runnable stack.
 
 Wire all 7 services with correct dependencies and env vars:
 
@@ -89,6 +93,7 @@ Supporting configs to create:
 ---
 
 ### Step 5 — Grafana Provisioning (`grafana/`)
+**Brief:** Define Grafana datasources and dashboards as code so Grafana boots up fully configured without requiring manual UI setup.
 
 - [ ] `grafana/provisioning/datasources/datasources.yaml`:
   - [ ] Prometheus datasource → `http://prometheus:9090`
@@ -107,6 +112,7 @@ Supporting configs to create:
 ---
 
 ### Step 6 — Locust Load Test (`locust/`)
+**Brief:** Create a background traffic generator to simulate real user load, ensuring the dashboards always display live telemetry data.
 
 - [ ] `locust/locustfile.py`:
   - [ ] `HttpUser` with tasks hitting `GET /items`, `GET /items/{id}` at varying weights
@@ -120,6 +126,7 @@ Supporting configs to create:
 ---
 
 ### Step 7 — Phase 1 Validation ✅
+**Brief:** Prove the local pipeline works end-to-end: traffic flows from Locust → App → ADOT → Backends → Grafana, and logs correlate with traces.
 
 - [ ] `docker compose up` — all 6 core services start and stay healthy
 - [ ] `GET /health` → 200
@@ -141,6 +148,7 @@ Supporting configs to create:
 ---
 
 ### Step 8 — Local AWS Auth & Terraform State Bootstrap
+**Brief:** Prepare the AWS environment for Infrastructure-as-Code (IaC) by establishing remote state storage in S3 and state locking in DynamoDB.
 
 - [ ] Ensure local AWS authentication is active (e.g., `aws sso login` or valid `~/.aws/credentials`)
 - [ ] Create S3 bucket for TF state (manually or via a bootstrap script) — versioning enabled
@@ -152,6 +160,7 @@ Supporting configs to create:
 ---
 
 ### Step 9 — Core AWS Infrastructure (`terraform/`)
+**Brief:** Provision the foundational AWS networking (VPC), container orchestration (ECS Cluster), and registry (ECR) needed to host the platform.
 
 - [ ] `terraform/variables.tf` — `aws_region`, `project_name`, `environment`
 - [ ] `terraform/vpc.tf` — VPC, public/private subnets, NAT Gateway, Internet Gateway
@@ -165,6 +174,7 @@ Supporting configs to create:
 ---
 
 ### Step 10 — Observability Infrastructure
+**Brief:** Create the managed backend services (Managed Prometheus, S3 for Loki logs) and store their connection secrets securely in SSM Parameter Store.
 
 - [ ] `terraform/amp.tf` — Amazon Managed Prometheus workspace; output remote write URL
 - [ ] `terraform/s3.tf` — S3 bucket for Loki chunk storage; versioning + lifecycle rules
@@ -175,6 +185,7 @@ Supporting configs to create:
 ---
 
 ### Step 11 — ECS Services
+**Brief:** Define and deploy the actual containerized applications to ECS Fargate, reusing the same Docker images and configuration structures built in Phase 1.
 
 - [ ] **App + ADOT sidecar** (`terraform/ecs_app.tf`):
   - [ ] Task definition with two containers: `app` and `adot`
@@ -193,6 +204,7 @@ Supporting configs to create:
 ---
 
 ### Step 12 — CI/CD Pipeline (`.github/workflows/`)
+**Brief:** Automate the build and deployment process so that pushes to the repository automatically update the AWS infrastructure and application code.
 
 - [ ] `.github/workflows/deploy.yml`:
   - [ ] Trigger: push to `main`
@@ -211,6 +223,7 @@ Supporting configs to create:
 ---
 
 ### Step 13 — Phase 2 Validation ✅
+**Brief:** Confirm the production-grade AWS deployment is fully operational, proving that telemetry flows correctly through the cloud infrastructure.
 
 - [ ] Grafana ALB URL accessible in browser
 - [ ] All Grafana datasources (AMP, Loki, X-Ray) show green
