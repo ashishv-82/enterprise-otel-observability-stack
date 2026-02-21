@@ -1,7 +1,7 @@
 # Enterprise OTel Observability Stack
 
 > [!IMPORTANT]
-> **Current Status:** Phase 1 (Local) is **Complete**. Phase 2 (AWS) is **In Progress** (Currently on Step 12 — CI/CD).
+> **Current Status:** Phase 1 (Local) is **Complete**. Phase 2 (AWS) is **In Progress** (Step 13 — Validation). All three ECS services (Grafana, Loki, App+ADOT) are live in AWS.
 
 A production-grade, end-to-end observability platform for containerised applications using **OpenTelemetry** as the unified telemetry layer. Infrastructure, configuration, and dashboards are all managed as code.
 

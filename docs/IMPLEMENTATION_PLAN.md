@@ -197,7 +197,12 @@ Supporting configs to create:
   - [x] ECS Service; public-facing ALB; security group allows 443/80
 - [x] `terraform/alb.tf` — Application Load Balancers for App and Grafana
 
-**Done when:** `terraform plan` deploys all three ECS services; Grafana accessible via ALB DNS. ✅ Validated locally.
+**Done when:** All three ECS services healthy in AWS. ✅ Deployed and validated.
+
+> [!NOTE]
+> **Deployment lessons learned:**
+> - `grafana/loki:latest` is a **distroless** image with no shell — must pin to `grafana/loki:2.9.8` (Alpine-based).
+> - Terraform `jsonencode` escapes `$$VAR` to `$1VAR` in the runtime shell, corrupting variable expansion. Use `printenv VARNAME` instead of `echo "$$VAR"` for all config file injection.
 
 ---
 
@@ -216,16 +221,16 @@ Supporting configs to create:
 - [x] GitHub secrets: `AWS_ROLE_ARN`, `AWS_REGION`, `TF_STATE_BUCKET`
 - [x] OIDC role in AWS IAM (`terraform/iam_github.tf`) with trust policy for GitHub Actions
 
-**Done when:** `terraform plan` validates the CI/CD resources; workflow file pushed. ✅ Validated locally.
+**Done when:** First bootstrap deploy via `terraform apply` locally; GitHub Secrets set via CLI (`gh secret set`). Subsequent deploys via GitHub Actions push. ✅ Complete.
 
 ---
 
 ### Step 13 — Phase 2 Validation ✅
 **Brief:** Confirm the production-grade AWS deployment is fully operational, proving that telemetry flows correctly through the cloud infrastructure.
 
-- [ ] Grafana ALB URL accessible in browser
-- [ ] All Grafana datasources (AMP, Loki, X-Ray) show green
-- [ ] Overview dashboard renders with live data from AWS
+- [x] Grafana ALB URL accessible in browser
+- [/] All Grafana datasources (AMP, Loki, X-Ray) show green
+- [/] Overview dashboard renders with live data from AWS
 - [ ] Locust run (ad-hoc) creates a spike on the AMP-backed dashboard
 - [ ] `/crash` endpoint produces a log in Loki + trace in X-Ray + they are correlated in Grafana
 - [ ] `terraform destroy` tears everything down cleanly (S3/DynamoDB state persists)
