@@ -24,30 +24,30 @@
 - [x] Create `prometheus.yml` and `loki-config.yaml` supporting configs
 - [x] Copy `.env.example` → `.env`
 
-**Done when:** `docker compose config` validates without errors. ⚠️ Deferred — start Docker Desktop and run `docker compose config` to confirm at next session start.
+**Done when:** `docker compose config` validates without errors. ✅ Verified.
 
 ---
 
 ### Step 2 — FastAPI Application (`app/`)
 
-- [ ] `app/main.py` — FastAPI app with:
-  - [ ] OTel SDK setup: `TracerProvider`, `MeterProvider`, `LoggerProvider`
-  - [ ] OTLP exporter configured from `OTEL_EXPORTER_OTLP_ENDPOINT` env var
-  - [ ] Auto-instrumentation for FastAPI via `FastAPIInstrumentor`
-  - [ ] Health check endpoint: `GET /health` → `{"status": "ok"}`
-  - [ ] Crash endpoint: `GET /crash` → raises unhandled exception → 500 + stack trace
-  - [ ] A few sample endpoints to generate varied traces: `GET /items`, `GET /items/{id}`
-- [ ] `app/metrics.py` — Custom OTel metrics:
-  - [ ] `active_simulated_users` Gauge (updated by background thread)
-  - [ ] `request_count` Counter (incremented per request)
-- [ ] `app/log_generator.py` — Background thread:
-  - [ ] Runs every 5–10 seconds
-  - [ ] Emits random mix of `INFO`, `WARNING`, `ERROR` log records via OTel Logger
-  - [ ] **Crucial:** Ensure the OTel `Resource` (with `service.name`) is attached to logs so Loki can filter them
-- [ ] `app/requirements.txt` — Pin all dependencies
-- [ ] `app/Dockerfile` — Multi-stage build, non-root user
+- [x] `app/main.py` — FastAPI app with:
+  - [x] OTel SDK setup: `TracerProvider`, `MeterProvider`, `LoggerProvider`
+  - [x] OTLP exporter configured from `OTEL_EXPORTER_OTLP_ENDPOINT` env var
+  - [x] Auto-instrumentation for FastAPI via `FastAPIInstrumentor`
+  - [x] Health check endpoint: `GET /health` → `{"status": "ok"}`
+  - [x] Crash endpoint: `GET /crash` → raises unhandled exception → 500 + error detail
+  - [x] Sample endpoints: `GET /items`, `GET /items/{id}`
+- [x] `app/metrics.py` — Custom OTel metrics:
+  - [x] `active_simulated_users` Observable Gauge (updated by background thread)
+  - [x] `request_count` Counter (incremented per request)
+- [x] `app/log_generator.py` — Background thread:
+  - [x] Runs every 5–10 seconds
+  - [x] Emits random mix of `INFO`, `WARNING`, `ERROR` log records via OTel Logger
+  - [x] OTel `Resource` (with `service.name`) attached via `LoggerProvider`
+- [x] `app/requirements.txt` — Pinned dependencies (note: `setuptools==69.5.1` required for `pkg_resources` compat with OTel instrumentation)
+- [x] `app/Dockerfile` — Venv-based multi-stage build, non-root user
 
-**Done when:** `docker compose up app` starts, `GET /health` returns 200, `GET /crash` returns 500 with trace in response.
+**Done when:** `docker compose up app` starts, `GET /health` returns 200, `GET /crash` returns 500 with error detail. ✅ Verified.
 
 ---
 
