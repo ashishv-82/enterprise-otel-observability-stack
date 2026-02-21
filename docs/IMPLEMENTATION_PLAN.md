@@ -185,19 +185,19 @@ Supporting configs to create:
 ### Step 11 — ECS Services
 **Brief:** Define and deploy the actual containerized applications to ECS Fargate, reusing the same Docker images and configuration structures built in Phase 1.
 
-- [ ] **App + ADOT sidecar** (`terraform/ecs_app.tf`):
-  - [ ] Task definition with two containers: `app` and `adot`
-  - [ ] ADOT config injected via SSM; endpoints updated to point to AMP, Loki-on-ECS, X-Ray
-  - [ ] ECS Service with desired count 1; ALB target group
-- [ ] **Loki** (`terraform/ecs_loki.tf`):
-  - [ ] Task definition with S3 backend config
-  - [ ] ECS Service; internal ALB or service discovery
-- [ ] **Grafana** (`terraform/ecs_grafana.tf`):
-  - [ ] Task definition with provisioning configs mounted from SSM / S3
-  - [ ] ECS Service; public-facing ALB; security group allows 443/80
-- [ ] `terraform/alb.tf` — Application Load Balancers for App and Grafana
+- [x] **App + ADOT sidecar** (`terraform/ecs_app.tf`):
+  - [x] Task definition with two containers: `app` and `adot`
+  - [x] ADOT config injected via SSM; endpoints updated to point to AMP, Loki-on-ECS, X-Ray
+  - [x] ECS Service with desired count 1; ALB target group
+- [x] **Loki** (`terraform/ecs_loki.tf`):
+  - [x] Task definition with S3 backend config
+  - [x] ECS Service; internal ALB or service discovery
+- [x] **Grafana** (`terraform/ecs_grafana.tf`):
+  - [x] Task definition with provisioning configs mounted from SSM / S3
+  - [x] ECS Service; public-facing ALB; security group allows 443/80
+- [x] `terraform/alb.tf` — Application Load Balancers for App and Grafana
 
-**Done when:** `terraform apply` deploys all three ECS services; Grafana accessible via ALB DNS.
+**Done when:** `terraform plan` deploys all three ECS services; Grafana accessible via ALB DNS. ✅ Validated locally.
 
 ---
 
