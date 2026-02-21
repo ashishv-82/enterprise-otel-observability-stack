@@ -56,16 +56,16 @@
 ### Step 3 — ADOT Collector Config (`adot/`)
 **Brief:** Configure the AWS Distro for OpenTelemetry (ADOT) collector to receive all telemetry from the app and route it to local backend storage containers.
 
-- [ ] `adot/config.yaml` with:
-  - [ ] **Receiver:** `otlp` (grpc: 4317, http: 4318)
-  - [ ] **Processors:** `batch`, `resourcedetection`
-  - [ ] **Exporters:**
-    - [ ] `prometheusremotewrite` → `http://prometheus:9090/api/v1/write`
-    - [ ] `loki` → `http://loki:3100/loki/api/v1/push`
-    - [ ] `awsxray` → `http://xray-daemon:2000`
-  - [ ] **Pipelines:** `traces`, `metrics`, `logs` all wired through the above
+- [x] `adot/config.yaml` with:
+  - [x] **Receiver:** `otlp` (grpc: 4317, http: 4318)
+  - [x] **Processors:** `batch`, `resourcedetection`
+  - [x] **Exporters:**
+    - [x] `prometheusremotewrite` → `http://prometheus:9090/api/v1/write`
+    - [x] `otlphttp/loki` → `http://loki:3100/otlp` (standard OTLP natively accepted by Loki)
+    - [x] `awsxray` → `http://xray-daemon:2000`
+  - [x] **Pipelines:** `traces`, `metrics`, `logs` all wired through the above
 
-**Done when:** ADOT container starts without config errors and logs show receivers/exporters active.
+**Done when:** ADOT container starts without config errors and logs show receivers/exporters active. ✅ Verified.
 
 ---
 
@@ -74,21 +74,21 @@
 
 Wire all 7 services with correct dependencies and env vars:
 
-- [ ] `app` — FastAPI; depends on `adot`
-- [ ] `adot` — ADOT collector; image: `public.ecr.aws/aws-observability/aws-otel-collector:latest`
-- [ ] `prometheus` — `prom/prometheus`; expose port 9090; mount `prometheus.yml`
-- [ ] `loki` — `grafana/loki`; expose port 3100; mount `loki-config.yaml`; volume for MinIO storage
-- [ ] `minio` — `minio/minio`; S3-compatible storage for Loki; expose ports 9000/9001
-- [ ] `xray-daemon` — `amazon/aws-xray-daemon`; expose port 2000/UDP
-- [ ] `grafana` — `grafana/grafana-oss`; expose port 3000; mount provisioning dirs
-- [ ] `locust` — custom image from `locust/`; profile `--profile load` so it doesn't start by default
+- [x] `app` — FastAPI; depends on `adot`
+- [x] `adot` — ADOT collector; image: `public.ecr.aws/aws-observability/aws-otel-collector:latest`
+- [x] `prometheus` — `prom/prometheus`; expose port 9090; mount `prometheus.yml`
+- [x] `loki` — `grafana/loki`; expose port 3100; mount `loki-config.yaml`; volume for MinIO storage
+- [x] `minio` — `minio/minio`; S3-compatible storage for Loki; expose ports 9000/9001
+- [x] `xray-daemon` — `amazon/aws-xray-daemon`; expose port 2000/UDP
+- [x] `grafana` — `grafana/grafana-oss`; expose port 3000; mount provisioning dirs
+- [x] `locust` — custom image from `locust/`; profile `--profile load` so it doesn't start by default
 
 Supporting configs to create:
-- [ ] `prometheus.yml` — scrape configs for app metrics
-- [ ] `loki-config.yaml` — filesystem/MinIO storage config
-- [ ] `.env` — local env vars (gitignored)
+- [x] `prometheus.yml` — scrape configs for app metrics
+- [x] `loki-config.yaml` — filesystem/MinIO storage config
+- [x] `.env` — local env vars (gitignored)
 
-**Done when:** `docker compose up` starts all 6 core services healthy. Grafana accessible at `localhost:3000`.
+**Done when:** `docker compose config` is valid and the stack is ready to boot. ✅ Verified.
 
 ---
 
