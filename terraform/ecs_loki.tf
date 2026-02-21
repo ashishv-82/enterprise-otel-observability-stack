@@ -63,8 +63,10 @@ resource "aws_ecs_task_definition" "loki" {
 
   container_definitions = jsonencode([
     {
-      name      = "loki"
-      image     = "grafana/loki:latest"
+      name = "loki"
+      # Using a specific versioned tag (Alpine-based) which has /bin/sh.
+      # grafana/loki:latest is distroless and has no shell, making our init command impossible.
+      image     = "grafana/loki:2.9.8"
       cpu       = 512
       memory    = 1024
       essential = true
@@ -79,9 +81,9 @@ resource "aws_ecs_task_definition" "loki" {
         { name = "LOKI_CONFIG_CONTENT", valueFrom = aws_ssm_parameter.loki_config.arn },
         { name = "LOKI_S3_BUCKET", valueFrom = aws_ssm_parameter.loki_s3_bucket.arn }
       ]
-      # A neat trick to write the SSM parameter to a file before launching Loki
+      # Write the SSM-injected config to disk using printenv (avoids shell $$ escaping issues)
       entryPoint = ["/bin/sh", "-c"]
-      command    = ["echo \"$$LOKI_CONFIG_CONTENT\" > /etc/loki/local-config.yaml && /usr/bin/loki -config.file=/etc/loki/local-config.yaml -config.expand-env=true"]
+      command    = ["mkdir -p /etc/loki && printenv LOKI_CONFIG_CONTENT > /etc/loki/local-config.yaml && /usr/bin/loki -config.file=/etc/loki/local-config.yaml -config.expand-env=true"]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
