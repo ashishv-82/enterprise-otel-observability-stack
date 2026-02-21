@@ -67,3 +67,12 @@ jobs:
       - name: Terraform Apply
         working-directory: ./terraform
         run: terraform apply -auto-approve -var="environment=dev" -var="aws_region=${{ env.AWS_REGION }}"
+
+      # ECS does not automatically pull new :latest images if the Task Definition hasn't changed.
+      # This command forces the service to restart its tasks, pulling the fresh image we just built.
+      - name: Force ECS App Redeployment
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.PROJECT_NAME }}-cluster-dev \
+            --service ${{ env.PROJECT_NAME }}-app-svc-dev \
+            --force-new-deployment
