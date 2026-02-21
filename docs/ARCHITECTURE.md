@@ -106,6 +106,15 @@ flowchart TD
 - **Decision:** Build and validate the full stack locally on Docker Desktop before deploying any AWS resources.
 - **Rationale:** Proves the telemetry pipeline works end-to-end before introducing cloud cost and IAM complexity. Locust → ADOT → Prometheus → Grafana must show real chart spikes on localhost first. The Phase 1 local stack is a faithful simulation of Phase 2 (same configs, same images, swapped endpoints), not a throwaway prototype.
 
+### ADR-007: ECS Fargate for Compute
+- **Decision:** Use Amazon ECS with the Fargate launch type for all container workloads.
+- **Rationale:** Fargate provides serverless compute for containers, eliminating the need to provision, patch, or scale underlying EC2 instances. It offers a near 1:1 mapping from our local `docker-compose.yml` services to AWS Task Definitions. It also natively supports the ADOT sidecar pattern, allowing the app and collector to run tightly coupled.
+- **Rejected:** EC2 (requires managing servers and AMIs), EKS/Kubernetes (adds immense operational and networking complexity unnecessary for a core observability demonstration).
+
+### ADR-008: Raw Terraform vs Modules for Core Infra
+- **Decision:** Use official modules for networking (VPC), but raw Terraform `resource` blocks for Compute (ECS), Storage (ECR), and Security (IAM/SGs).
+- **Rationale:** The AWS VPC module abstracts away hundreds of lines of error-prone routing boilerplate. However, for ECS and IAM, writing raw resources ensures complete transparency and strict adherence to least-privilege security. Massive external ECS modules often overcomplicate serverless Fargate deployments and obscure IAM role permissions.
+
 ---
 
 ## 5. What Changes Between Phase 1 and Phase 2
