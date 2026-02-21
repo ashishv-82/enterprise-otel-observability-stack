@@ -86,7 +86,7 @@ Phase 2 (AWS)    →  use Terraform to replicate the same pipes in the cloud
 │   ├── provisioning/
 │   │   ├── datasources/      # Grafana datasource provisioning
 │   │   └── dashboards/       # Grafana dashboard provisioning
-│   └── dashboards/           # Dashboard JSON files
+│   └── dashboard-definitions/# Dashboard JSON files
 ├── locust/                   # Load test scripts
 ├── terraform/                # All IaC — ECS, AMP, S3, IAM (Phase 2)
 ├── .github/workflows/        # CI/CD pipeline (Phase 2)
