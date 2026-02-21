@@ -98,10 +98,11 @@ resource "aws_ecs_task_definition" "grafana" {
         { name = "GRAFANA_DASHBOARDS_YAML", valueFrom = aws_ssm_parameter.grafana_dashboards_yaml.arn },
         { name = "GRAFANA_OVERVIEW_JSON", valueFrom = aws_ssm_parameter.grafana_overview_json.arn }
       ]
-      # Intercept start to write provisioned files to disk
+      # Intercept start to write provisioned files from SSM secrets to disk before launching Grafana.
+      # printf '%s\n' is used instead of echo to safely handle multi-line YAML strings.
       entryPoint = ["/bin/sh", "-c"]
       command = [
-        "mkdir -p /etc/grafana/provisioning/datasources /etc/grafana/provisioning/dashboards /var/lib/grafana/dashboards && echo \"$$GRAFANA_DATASOURCES_YAML\" > /etc/grafana/provisioning/datasources/datasources.yaml && echo \"$$GRAFANA_DASHBOARDS_YAML\" > /etc/grafana/provisioning/dashboards/dashboards.yaml && echo \"$$GRAFANA_OVERVIEW_JSON\" > /var/lib/grafana/dashboards/overview.json && exec /run.sh"
+        "mkdir -p /etc/grafana/provisioning/datasources /etc/grafana/provisioning/dashboards /var/lib/grafana/dashboards && printf '%s\\n' \"$$GRAFANA_DATASOURCES_YAML\" > /etc/grafana/provisioning/datasources/datasources.yaml && printf '%s\\n' \"$$GRAFANA_DASHBOARDS_YAML\" > /etc/grafana/provisioning/dashboards/dashboards.yaml && printf '%s\\n' \"$$GRAFANA_OVERVIEW_JSON\" > /var/lib/grafana/dashboards/overview.json && exec /run.sh"
       ]
       logConfiguration = {
         logDriver = "awslogs"
