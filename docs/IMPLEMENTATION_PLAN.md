@@ -160,14 +160,14 @@ Supporting configs to create:
 ### Step 9 — Core AWS Infrastructure (`terraform/`)
 **Brief:** Provision the foundational AWS networking (VPC), container orchestration (ECS Cluster), and registry (ECR) needed to host the platform.
 
-- [ ] `terraform/variables.tf` — `aws_region`, `project_name`, `environment`
-- [ ] `terraform/vpc.tf` — VPC, public/private subnets, NAT Gateway, Internet Gateway
-- [ ] `terraform/ecs.tf` — ECS Cluster (Fargate)
-- [ ] `terraform/ecr.tf` — ECR repository for the FastAPI app image
-- [ ] `terraform/iam.tf` — ECS task execution role and task role with least-privilege policies
-- [ ] `terraform/security_groups.tf` — SGs for each ECS service
+- [x] `terraform/variables.tf` — `aws_region`, `project_name`, `environment`
+- [x] `terraform/vpc.tf` — VPC, public/private subnets, NAT Gateway, Internet Gateway
+- [x] `terraform/ecs.tf` — ECS Cluster (Fargate)
+- [x] `terraform/ecr.tf` — ECR repository for the FastAPI app image
+- [x] `terraform/iam.tf` — ECS task execution role and task role with least-privilege policies
+- [x] `terraform/security_groups.tf` — SGs for each ECS service
 
-**Done when:** `terraform plan` shows expected resources with no errors.
+**Done when:** `terraform plan` shows expected resources with no errors. ✅ Validated locally.
 
 ---
 
