@@ -55,14 +55,12 @@ Step-by-step build tasks are in [`docs/IMPLEMENTATION_PLAN.md`](./docs/IMPLEMENT
 
 ## Current Phase
 
-> **🟡 PHASE 1 — Local (Docker Compose)**
-
-Update this line when transitioning to Phase 2.
+> **🟡 PHASE 2 — AWS (Terraform + ECS)**
 
 | Phase | Status | Infra |
 |---|---|---|
-| Phase 1 — Local | 🟡 In Progress | Docker Compose |
-| Phase 2 — AWS | ⬜ Not Started | Terraform + ECS |
+| Phase 1 — Local | ✅ Complete | Docker Compose |
+| Phase 2 — AWS | 🟡 In Progress | Terraform + ECS |
 
 ---
 
