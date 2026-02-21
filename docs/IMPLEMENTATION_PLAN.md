@@ -74,8 +74,8 @@
 
 Wire all 7 services with correct dependencies and env vars:
 
-- [x] `app` — FastAPI; depends on `adot`
-- [x] `adot` — ADOT collector; image: `public.ecr.aws/aws-observability/aws-otel-collector:latest`
+- [x] `app` — FastAPI; depends on `adot` (requires `OTEL_EXPORTER_OTLP_ENDPOINT` pointing to ADOT)
+- [x] `adot` — ADOT collector; requires dummy `AWS_ACCESS_KEY_ID` to bypass SDK auth checks locally
 - [x] `prometheus` — `prom/prometheus`; expose port 9090; mount `prometheus.yml`
 - [x] `loki` — `grafana/loki`; expose port 3100; mount `loki-config.yaml`; volume for MinIO storage
 - [x] `minio` — `minio/minio`; S3-compatible storage for Loki; expose ports 9000/9001
