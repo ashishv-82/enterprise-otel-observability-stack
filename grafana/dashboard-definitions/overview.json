@@ -25,7 +25,7 @@
             },
             "targets": [
                 {
-                    "expr": "active_simulated_users",
+                    "expr": "active_simulated_users_ratio",
                     "refId": "A",
                     "instant": true
                 }
@@ -86,7 +86,7 @@
             },
             "targets": [
                 {
-                    "expr": "{service_name=\"fastapi-otel-demo\"}",
+                    "expr": "{service_name=\"enterprise-api\"}",
                     "refId": "A"
                 }
             ],
