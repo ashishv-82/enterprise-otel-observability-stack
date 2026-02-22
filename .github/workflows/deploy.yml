@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths-ignore:
       - '**.md'
+      - 'images/**'
 
 permissions:
   id-token: write # Required for requesting the JWT
