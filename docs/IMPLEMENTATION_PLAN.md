@@ -201,8 +201,11 @@ Supporting configs to create:
 
 > [!NOTE]
 > **Deployment lessons learned:**
-> - `grafana/loki:latest` is a **distroless** image with no shell — must pin to `grafana/loki:2.9.8` (Alpine-based).
+> - `grafana/loki:latest` is a **distroless** image with no shell — must pin to version `3.0.0` or higher (Alpine-based) to support custom config scripts.
 > - Terraform `jsonencode` escapes `$$VAR` to `$1VAR` in the runtime shell, corrupting variable expansion. Use `printenv VARNAME` instead of `echo "$$VAR"` for all config file injection.
+> - Grafana SigV4 requires `GF_AUTH_SIGV4_AUTH_ENABLED=true` env var and `sigV4Service: aps` in the Prometheus yaml to avoid 403 Forbidden errors.
+> - X-Ray in Grafana requires **Read** permissions (`AWSXrayReadOnlyAccess`) even if the sidecar only needs **Write** permissions.
+> - Loki TraceID links for OTel Python require `matcherRegex: "trace_id=([1-9a-f][0-9a-f]{31})"` to match 32-char hex IDs.
 
 ---
 
@@ -218,6 +221,7 @@ Supporting configs to create:
     4. `terraform init`
     5. `terraform plan`
     6. `terraform apply -auto-approve`
+- [x] Optimize workflow with `paths-ignore: ['**.md']` to prevent redundant builds on documentation updates.
 - [x] GitHub secrets: `AWS_ROLE_ARN`, `AWS_REGION`, `TF_STATE_BUCKET`
 - [x] OIDC role in AWS IAM (`terraform/iam_github.tf`) with trust policy for GitHub Actions
 
@@ -229,10 +233,12 @@ Supporting configs to create:
 **Brief:** Confirm the production-grade AWS deployment is fully operational, proving that telemetry flows correctly through the cloud infrastructure.
 
 - [x] Grafana ALB URL accessible in browser
-- [/] All Grafana datasources (AMP, Loki, X-Ray) show green
-- [/] Overview dashboard renders with live data from AWS
-- [ ] Locust run (ad-hoc) creates a spike on the AMP-backed dashboard
-- [ ] `/crash` endpoint produces a log in Loki + trace in X-Ray + they are correlated in Grafana
-- [ ] `terraform destroy` tears everything down cleanly (S3/DynamoDB state persists)
+- [x] All Grafana datasources (AMP, Loki, X-Ray) show green
+- [x] Overview dashboard renders with live data from AWS
+- [x] Locust run (via ECS service) creates a spike on the AMP-backed dashboard
+- [x] `/crash` endpoint produces a log in Loki + trace in X-Ray + they are correlated in Grafana
+- [x] `terraform destroy` tears everything down cleanly (S3/DynamoDB state persists)
+
+**Phase 2 is complete. The project is production-ready.** ✅
 
 **Phase 2 is complete when all validation steps above pass.**

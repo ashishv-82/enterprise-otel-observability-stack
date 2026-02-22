@@ -118,7 +118,6 @@ Phase 2 (AWS)    →  use Terraform to replicate the same pipes in the cloud
 ├── docker-compose.yml              # Tech Stack (all 7 services)
 ├── prometheus.yml                  # Prometheus scrape config
 ├── loki-config.yaml                # Loki storage config (MinIO/S3 backend)
-├── .env.example                    # Environment variable template
 ├── .env                            # Local env values (gitignored)
 ├── docs/                           
 │   ├── ARCHITECTURE.md             # Full architecture + ADRs + cost breakdown
