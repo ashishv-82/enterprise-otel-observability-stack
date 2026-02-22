@@ -56,15 +56,21 @@ flowchart TD
 ## Stack
 
 
-| Signal | Local (Docker Compose) | AWS |
-|---|---|---|
-| Metrics | Prometheus | Amazon Managed Prometheus (AMP) |
-| Logs | Loki + MinIO | Loki on ECS + S3 |
-| Traces | X-Ray Daemon (Docker) | AWS X-Ray (managed) |
-| Visualisation | Grafana OSS | Grafana OSS on ECS |
-| Collector | ADOT (Docker) | ADOT Sidecar on ECS |
-| IaC | — | Terraform |
-| CI/CD | — | GitHub Actions |
+| Feature / Signal | Local (All Containers) | AWS Production (ECS + Managed) | Type in AWS |
+| :--- | :--- | :--- | :--- |
+| **Application** | `app` | `app` | **ECS Container** |
+| **Telemetry Collector** | `adot` (Standalone) | `adot` (Sidecar) | **ECS Container** |
+| **Metrics Storage** | `prometheus` | **Amazon Managed Prometheus (AMP)** | **Managed Service** |
+| **Log Database** | `loki` | `loki` | **ECS Container** |
+| **Log Storage (Object)** | `minio` (S3 Simulator) | **Amazon S3** | **Managed Service** |
+| **Trace Storage** | `xray-daemon` | **AWS X-Ray** | **Managed Service** |
+| **Visualization** | `grafana` | `grafana` | **ECS Container** |
+| **Load Generator** | `locust` | `locust` | **ECS Container** |
+| **Traffic Direction** | Network Bridge | **Application Load Balancer (ALB)** | **Managed Service** |
+| **Secrets / Config** | `.env` file | **SSM Parameter Store** | **Managed Service** |
+| **IaC** | — | **Terraform** | **Tooling** |
+| **CI/CD** | — | **GitHub Actions** | **Tooling** |
+
 
 ## Implementation Strategy
 
@@ -83,26 +89,26 @@ Phase 2 (AWS)    →  use Terraform to replicate the same pipes in the cloud
 
 ```
 .
-├── app/                      # FastAPI app + OTel instrumentation
-├── adot/                     # ADOT collector config (config.yaml)
+├── app/                            # FastAPI app + OTel instrumentation
+├── adot/                           # ADOT collector config (config.yaml)
 ├── grafana/
-│   ├── provisioning/
-│   │   ├── datasources/      # Grafana datasource provisioning
-│   │   └── dashboards/       # Grafana dashboard provisioning
-│   └── dashboard-definitions/# Dashboard JSON files
-├── locust/                   # Load test scripts
-├── terraform/                # All IaC — ECS, AMP, S3, IAM (Phase 2)
-├── .github/workflows/        # CI/CD pipeline (Phase 2)
-├── docker-compose.yml        # Phase 1 local stack (all 7 services)
-├── prometheus.yml            # Prometheus scrape config
-├── loki-config.yaml          # Loki storage config (MinIO/S3 backend)
-├── .env.example              # Environment variable template
-├── .env                      # Local env values (gitignored)
-├── docs/                     
-│   ├── ARCHITECTURE.md       # Full architecture + ADRs + cost breakdown
-│   └── IMPLEMENTATION_PLAN.md # Step-by-step build checklist
-├── AGENTS.md                 # Agent instructions and conventions
-└── README.md                 # This file
+│   ├── provisioning/               # Grafana datasource and dashboard provisioning
+│   │   ├── datasources/            # Grafana datasource provisioning
+│   │   └── dashboards/             # Grafana dashboard provisioning
+│   └── dashboard-definitions/      # Dashboard JSON files
+├── locust/                         # Load test scripts
+├── terraform/                      # All IaC — ECS, AMP, S3, IAM (Phase 2)
+├── .github/workflows/              # CI/CD pipeline (Phase 2)
+├── docker-compose.yml              # Phase 1 local stack (all 7 services)
+├── prometheus.yml                  # Prometheus scrape config
+├── loki-config.yaml                # Loki storage config (MinIO/S3 backend)
+├── .env.example                    # Environment variable template
+├── .env                            # Local env values (gitignored)
+├── docs/                           
+│   ├── ARCHITECTURE.md             # Full architecture + ADRs + cost breakdown
+│   └── IMPLEMENTATION_PLAN.md      # Step-by-step build checklist
+├── AGENTS.md                       # Agent instructions and conventions
+└── README.md                       # This file
 ```
 
 ## Docs
