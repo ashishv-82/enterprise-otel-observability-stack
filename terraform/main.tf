@@ -19,6 +19,7 @@ terraform {
     dynamodb_table = "otel-enterprise-tf-locks"
     encrypt        = true
   }
+
 }
 
 provider "aws" {

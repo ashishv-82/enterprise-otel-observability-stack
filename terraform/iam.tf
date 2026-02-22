@@ -60,10 +60,22 @@ resource "aws_iam_role_policy_attachment" "xray_write" {
   policy_arn = "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
 }
 
+# 1a. Allow Grafana to read traces from AWS X-Ray
+resource "aws_iam_role_policy_attachment" "xray_read" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXrayReadOnlyAccess"
+}
+
 # 2. Allow ADOT to write metrics to Amazon Managed Prometheus (AMP)
 resource "aws_iam_role_policy_attachment" "amp_write" {
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonPrometheusRemoteWriteAccess"
+}
+
+# 3. Allow Grafana to query metrics from Amazon Managed Prometheus (AMP)
+resource "aws_iam_role_policy_attachment" "amp_query" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonPrometheusQueryAccess"
 }
 
 # 3. Allow Loki to read/write log chunks to Amazon S3
