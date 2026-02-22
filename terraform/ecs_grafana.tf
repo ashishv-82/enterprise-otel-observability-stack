@@ -35,24 +35,26 @@ datasources:
   - name: Prometheus
     type: prometheus
     access: proxy
-    url: $${AMP_WORKSPACE_URL}
+    url: ${aws_prometheus_workspace.main.prometheus_endpoint}
     isDefault: true
     jsonData:
       sigV4Auth: true
       sigV4AuthType: default
-      sigV4Region: $${AWS_REGION}
+      sigV4Region: ${var.aws_region}
+      sigV4Service: aps
 
   # 2. Loki (Logs) -> Internal ECS Service
   - name: Loki
     type: loki
     access: proxy
-    url: http://$${LOKI_ENDPOINT}:3100
+    url: http://${aws_lb.internal.dns_name}:3100
     jsonData:
       derivedFields:
         - datasourceUid: xray
-          matcherRegex: "trace_id=([a-zA-Z0-9]+)"
+          matcherType: regex
+          matcherRegex: "trace_id=([1-9a-f][0-9a-f]{31})"
           name: TraceID
-          url: "$$${__value.raw}"
+          url: "$${__value.raw}"
 
   # 3. AWS X-Ray (Traces) -> Natively uses ECS Task Role
   - name: X-Ray
@@ -61,7 +63,7 @@ datasources:
     access: proxy
     jsonData:
       authType: default
-      defaultRegion: $${AWS_REGION}
+      defaultRegion: ${var.aws_region}
 EOF
 }
 
@@ -88,6 +90,8 @@ resource "aws_ecs_task_definition" "grafana" {
         { containerPort = 3000, hostPort = 3000, protocol = "tcp" }
       ]
       environment = [
+        { name = "GF_INSTALL_PLUGINS", value = "grafana-x-ray-datasource" },
+        { name = "GF_AUTH_SIGV4_AUTH_ENABLED", value = "true" },
         { name = "AWS_REGION", value = var.aws_region },
         { name = "LOKI_ENDPOINT", value = aws_lb.internal.dns_name },
         # AMP remote write URL resolves to `api/v1/remote_write`. Query URL is the workspace itself.

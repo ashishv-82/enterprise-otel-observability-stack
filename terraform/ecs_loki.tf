@@ -66,7 +66,8 @@ resource "aws_ecs_task_definition" "loki" {
       name = "loki"
       # Using a specific versioned tag (Alpine-based) which has /bin/sh.
       # grafana/loki:latest is distroless and has no shell, making our init command impossible.
-      image     = "grafana/loki:2.9.8"
+      # Loki 3.0+ supports the native OTLP endpoint (/otlp/v1/logs) used by ADOT's otlphttp exporter.
+      image     = "grafana/loki:3.3.2"
       cpu       = 512
       memory    = 1024
       essential = true

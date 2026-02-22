@@ -46,8 +46,8 @@ exporters:
     endpoint: "$${AMP_REMOTE_WRITE_URL}"
     auth:
       authenticator: sigv4auth
-    resource_to_telemetry_conversion:
-      enabled: true
+  # otlphttp/loki sends logs to Loki's native OTLP endpoint (/otlp/v1/logs)
+  # This requires Loki 3.0+ which we now run (grafana/loki:3.3.2)
   otlphttp/loki:
     endpoint: "http://$${LOKI_ENDPOINT}:3100/otlp"
     tls:
