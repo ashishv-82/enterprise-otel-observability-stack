@@ -16,7 +16,19 @@ This project demonstrates the three pillars of observability — **Metrics, Logs
 
 A **Locust** load generator and background metric/log emitters ensure the dashboards are always live — no manual traffic needed.
 
-## Architecture
+## Dashboards
+
+### Overview Dashboard
+The Overview dashboard provides a high-level view of the system health, including metric-based request rates and simulated user counts alongside live Loki log streams.
+
+![Grafana Dashboard](images/grafana-dashboard.png)
+
+### Log-to-Trace Correlation
+Expanding a log line in Loki reveals structured metadata, including the TraceID. This is linked natively to AWS X-Ray, allowing for seamless navigation to the waterfall view.
+
+![X-Ray Trace Waterfall](images/traces-in-grafana.png)
+
+## High-Level Architecture
 
 ```mermaid
 flowchart TD
@@ -52,6 +64,10 @@ flowchart TD
     L --> G
     T --> G
 ```
+
+## AWS Architecture
+
+![AWS Architecture Diagram](images/aws-architecture.webp)
 
 ## Stack
 
@@ -99,7 +115,7 @@ Phase 2 (AWS)    →  use Terraform to replicate the same pipes in the cloud
 ├── locust/                         # Load test scripts
 ├── terraform/                      # All IaC — ECS, AMP, S3, IAM (Phase 2)
 ├── .github/workflows/              # CI/CD pipeline (Phase 2)
-├── docker-compose.yml              # Phase 1 local stack (all 7 services)
+├── docker-compose.yml              # Tech Stack (all 7 services)
 ├── prometheus.yml                  # Prometheus scrape config
 ├── loki-config.yaml                # Loki storage config (MinIO/S3 backend)
 ├── .env.example                    # Environment variable template
