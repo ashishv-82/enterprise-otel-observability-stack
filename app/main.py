@@ -62,7 +62,10 @@ def setup_telemetry() -> None:
 
     # Bridge Python standard logging → OTel LoggerProvider
     otel_handler = LoggingHandler(level=logging.DEBUG, logger_provider=logger_provider)
-    logging.basicConfig(level=logging.DEBUG, handlers=[otel_handler])
+    
+    # Configure the base Python logger to output OTel injected Trace and Span IDs
+    log_format = "[trace_id=%(otelTraceID)s span_id=%(otelSpanID)s] %(levelname)s %(message)s"
+    logging.basicConfig(level=logging.DEBUG, format=log_format, handlers=[otel_handler])
 
     # Configure metric instruments now that the provider is ready
     meter = otel_metrics.get_meter(__name__)
