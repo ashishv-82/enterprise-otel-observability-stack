@@ -5,6 +5,8 @@
 
 A production-grade, end-to-end observability platform for containerised applications using **OpenTelemetry** as the unified telemetry layer. Infrastructure, configuration, and dashboards are all managed as code.
 
+<!-- Version: 1.0.0-verified -->
+
 ## What This Is
 
 This project demonstrates the three pillars of observability — **Metrics, Logs, and Traces** — wired together in a single, coherent pipeline:
